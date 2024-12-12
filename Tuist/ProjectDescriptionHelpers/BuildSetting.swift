@@ -157,13 +157,11 @@ public struct BuildSetting {
         ]
         
         public static let debug: SettingsDictionary = [
-            "PRODUCT_BUNDLE_IDENTIFIER": "com.sensei.lee.appstoreclone-debug.service-extension",
-            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]": "jungho lee"
+            "PRODUCT_BUNDLE_IDENTIFIER": "com.sensei.lee.appstoreclone-debug.service-extension"
         ]
         
         public static let release: SettingsDictionary = [
-            "PRODUCT_BUNDLE_IDENTIFIER": "com.sensei.lee.appstoreclone.service-extension",
-            "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]": "jungho lee"
+            "PRODUCT_BUNDLE_IDENTIFIER": "com.sensei.lee.appstoreclone.service-extension"
         ]
     }
     
