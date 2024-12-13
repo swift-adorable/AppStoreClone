@@ -59,9 +59,9 @@ extension Project {
                                        destinations: .iOS,
                                        product: .framework,
                                        bundleId: DefaultSetting.bundleId(moduleName: name),
-                                       infoPlist: "\(name)/Info.plist",
-                                       sources: ["\(name)/Sources/**"],
-                                       resources: ["\(name)/Resources/**"],
+                                       infoPlist: .default,
+                                       sources: ["Sources/**"],
+                                       resources: ["Resources/**"],
                                        dependencies: dependencies)
         
         targets.append(mainTarget)
@@ -91,7 +91,7 @@ extension Project {
                                            destinations: .iOS,
                                            product: .app,
                                            bundleId: DefaultSetting.bundleId(moduleName: name.lowercased()) + "-demo",
-                                           infoPlist: "Demo/Info.plist",
+                                           infoPlist: .default,
                                            sources: ["Demo/Sources/**"],
                                            dependencies: [.project(target: "\(name)", path: "./"),
 //                                                          .mock,
@@ -106,7 +106,7 @@ extension Project {
                                                                  attachDebugger: true))
             schemes.append(demoScheme)
         }
-        
+                
         return Project(name: name,
                        organizationName: DefaultSetting.organizationName,
                        packages: package,

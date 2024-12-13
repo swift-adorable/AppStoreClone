@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+import Today
+
 public enum Tab: String, CaseIterable {
     case today = "today"
     case app = "app"

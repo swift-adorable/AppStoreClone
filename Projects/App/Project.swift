@@ -1,6 +1,18 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let appDependencies: [TargetDependency] = [
+    .Core.model,
+    .Core.common,
+    .Core.network,
+    .Core.dependencyInjection,
+    
+    .Feature.today,
+    
+    .target(name: "service-extension"),
+    .target(name: "content-extension"),
+]
+
 // MARK: - Project
 let project = Project(
     name: "AppStoreClone",
@@ -37,13 +49,7 @@ let project = Project(
             resources: ["AppStoreClone/Resources/**"],
             scripts: [
             ],
-            dependencies: [
-                .Core.network,
-                .Core.common,
-                .Core.dependencyInjection,
-                .target(name: "service-extension"),
-                .target(name: "content-extension"),
-            ],
+            dependencies: appDependencies,
             settings: .settings(
                 base: BuildSetting.App.base,
                 configurations: [

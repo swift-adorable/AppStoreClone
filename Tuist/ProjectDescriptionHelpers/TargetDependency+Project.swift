@@ -30,12 +30,21 @@ public extension TargetDependency {
         
     }
     
+    class Feature {
+        
+        public static let today = TargetDependency.project(
+            target: "Today",
+            path: .relativeToRoot("Projects/Feature/Today")
+        )
+        
+    }
+    
     class SPM {
 
         public static let swinject = TargetDependency.external(name: "Swinject")
+        public static let kingfisher = TargetDependency.external(name: "Kingfisher")
         
 //        public static let lottie = TargetDependency.external(name: "Lottie")
-//        public static let kingfisher = TargetDependency.external(name: "Kingfisher")
 //        public static let snapKit = TargetDependency.external(name: "SnapKit")
 //        public static let then = TargetDependency.external(name: "Then")
 //        public static let panModal = TargetDependency.external(name: "PanModal")
