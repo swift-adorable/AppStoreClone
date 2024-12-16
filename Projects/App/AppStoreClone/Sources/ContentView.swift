@@ -21,6 +21,9 @@ struct ContentView: View {
                 Spacer()
                 tabBar
             }
+//            .foregroundStyle(.clear)
+//            .background(.clear)
+            
         }
     }
     
