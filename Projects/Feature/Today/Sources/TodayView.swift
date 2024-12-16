@@ -15,11 +15,13 @@ import Kingfisher
 public struct TodayView: View {
     
     @State private var apps = [Model.App]()
+    @State private var scrollOffset: CGFloat = 0
     
-    public init() { 
+    public init() {
 //        let appearance = UINavigationBarAppearance()
-//        appearance.configureWithOpaqueBackground()
-//        appearance.backgroundColor = .clear
+//        appearance.configureWithOpaqueBackground()//configureWithTransparentBackground()
+//        appearance.shadowColor = .clear
+//        //appearance.backgroundColor = .systemBackground
 //        UINavigationBar.appearance().standardAppearance = appearance
 //        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -29,29 +31,60 @@ public struct TodayView: View {
             
             ScrollView {
                 VStack(spacing: 20) {
+                    Spacer()
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 15) {
+                            CategoryButton(title: "소셜 네트워킹", icon: "bubble.left.and.bubble.right")
+                            CategoryButton(title: "엔터테인먼트", icon: "popcorn")
+                            CategoryButton(title: "사진 및 비디오", icon: "camera")
+                        }
+                    }
                     UsefulToolsSection(apps: apps)
                     NewDiscoverySection(apps: apps)
                     TodayFeatureSection()
                     Spacer()
                         .frame(height: 52)
                 }
+                .trackScrollOffset($scrollOffset)
             }
+            .coordinateSpace(name: "scroll")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    HStack(alignment: .firstTextBaseline) {
+
+                    if scrollOffset < -10 {
                         Text("투데이")
-                            .font(.largeTitle)
+                            .font(.headline)
                             .fontWeight(.bold)
-                        Text("12월 16일")
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Text("정호")
-                            .foregroundColor(.gray)
-                            .padding(8)
-                            .background(Color.gray.opacity(0.2))
-                            .clipShape(Circle())
+                    } else {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("투데이")
+                                    .font(.largeTitle)
+                                    .fontWeight(.bold)
+                                Text("12월 16일")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                ProfileButton()
+                            }
+                            
+                        }
+                        
                     }
+                    
+//                    HStack(alignment: .firstTextBaseline) {
+//                        Text("투데이")
+//                            .font(.largeTitle)
+//                            .fontWeight(.bold)
+//                        Text("12월 16일")
+//                            .foregroundColor(.gray)
+//                        Spacer()
+//                        Text("정호")
+//                            .foregroundColor(.gray)
+//                            .padding(6)
+//                            .background(Color.gray.opacity(0.2))
+//                            .clipShape(Circle())
+//                    }
                 }
             }
         }
@@ -267,7 +300,58 @@ struct TodayFeatureSection: View {
     }
 }
 
+struct CategoryButton: View {
+    let title: String
+    let icon: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+            Text(title)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color(.systemGray6))
+        .cornerRadius(15)
+    }
+}
 
+struct ProfileButton: View {
+    var body: some View {
+        Text("정호")
+            .foregroundColor(.gray)
+            .padding(8)
+            .background(Color.gray.opacity(0.2))
+            .clipShape(Circle())
+    }
+}
+
+// 스크롤 오프셋을 감지하기 위한 ViewModifier
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+extension View {
+    func trackScrollOffset(_ offset: Binding<CGFloat>) -> some View {
+        
+        overlay(
+            GeometryReader { proxy in
+                Color.clear.preference(
+                    key: ScrollOffsetPreferenceKey.self,
+                    value: proxy.frame(in: .named("scroll")).minY
+                )
+            }
+        )
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+            withAnimation(.easeInOut(duration: 0.3)) {
+                offset.wrappedValue = value
+            }
+        }
+    }
+}
 
 //        ScrollView([.vertical, .horizontal], showsIndicators: false) {
 //            Spacer(minLength: 10)
