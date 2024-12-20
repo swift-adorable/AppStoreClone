@@ -11,11 +11,11 @@ import SwiftUI
 import Today
 
 public enum Tab: String, CaseIterable {
-    case today = "today"
-    case app = "app"
-    case game = "game"
-    case arcade = "arcade"
-    case search = "search"
+    case today = "Today"
+    case app = "App"
+    case game = "Game"
+    case arcade = "Arcade"
+    case search = "Search"
 }
 
 public extension Tab {

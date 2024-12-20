@@ -1,6 +1,10 @@
 import SwiftUI
 import Network
 
+class AppState: ObservableObject {
+    @Published var isDetailViewShowing = false
+}
+
 struct ContentView: View {
     
     @State private var selected: Tab = .today
@@ -15,15 +19,12 @@ struct ContentView: View {
                     }.tag(tab)
                 }
                 .toolbar(.hidden, for: .tabBar)
-            }
+            }.navigationBarTitleDisplayMode(.inline)
             
             VStack {
                 Spacer()
                 tabBar
             }
-//            .foregroundStyle(.clear)
-//            .background(.clear)
-            
         }
     }
     

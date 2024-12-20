@@ -91,7 +91,7 @@ extension Project {
                                            destinations: .iOS,
                                            product: .app,
                                            bundleId: DefaultSetting.bundleId(moduleName: name.lowercased()) + "-demo",
-                                           infoPlist: .default,
+                                           infoPlist: "Demo/Info.plist",
                                            sources: ["Demo/Sources/**"],
                                            dependencies: [.project(target: "\(name)", path: "./"),
 //                                                          .mock,
