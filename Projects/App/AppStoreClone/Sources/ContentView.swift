@@ -25,6 +25,8 @@ struct ContentView: View {
                 Spacer()
                 tabBar
             }
+        }.onAppear {
+            print("TEST ContentView onAppear")
         }
     }
     

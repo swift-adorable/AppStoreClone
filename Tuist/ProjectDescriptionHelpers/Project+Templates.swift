@@ -93,7 +93,9 @@ extension Project {
                                            bundleId: DefaultSetting.bundleId(moduleName: name.lowercased()) + "-demo",
                                            infoPlist: "Demo/Info.plist",
                                            sources: ["Demo/Sources/**"],
-                                           dependencies: [.project(target: "\(name)", path: "./"),
+                                           dependencies: [
+                                            .target(name: "\(name)"),
+                                            .project(target: "\(name)", path: "./"),
 //                                                          .mock,
 //                                                          .SPM.snapKit
                                            ])

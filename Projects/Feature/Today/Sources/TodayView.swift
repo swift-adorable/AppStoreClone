@@ -12,6 +12,7 @@ import Common
 import Model
 import Kingfisher
 
+@MainActor
 public struct TodayView: View {
     @State private var apps = Model.Applications()
     @State private var currentItem: Model.Application?
@@ -21,6 +22,7 @@ public struct TodayView: View {
     @Namespace private var animation
     
     public init() {
+        print("TEST TodayView initialize")
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .systemBackground.withAlphaComponent(0.8)
@@ -34,7 +36,7 @@ public struct TodayView: View {
         NavigationStack {
             
             ScrollView {
-                VStack(spacing: 0) {
+                VStack(spacing: 20) {
                     
                     VStack(alignment: .leading) {
                         HStack(alignment: .firstTextBaseline) {
@@ -142,6 +144,9 @@ public struct TodayView: View {
                 rand.append(randItem)
             }
             apps = rand
+            print("TEST Today onAppear")
+        }.task {
+            print("TEST TodayView task started")
         }
         
     }
