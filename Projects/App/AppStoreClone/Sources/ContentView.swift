@@ -8,6 +8,7 @@ class AppState: ObservableObject {
 struct ContentView: View {
     
     @State private var selected: Tab = .today
+    @State private var tabCases: [Tab] = []
     
     @available(iOS 16.0, *)
     var body: some View {
@@ -27,14 +28,20 @@ struct ContentView: View {
             }
         }.onAppear {
             print("TEST ContentView onAppear")
+        }.task {
+            await loadTabCases()
         }
+    }
+    
+    private func loadTabCases() async {
+        self.tabCases = await Tab.allCases
     }
     
     var tabBar: some View {
         HStack {
             Spacer()
             
-            ForEach(Tab.allCases, id: \.self) { tab in
+            ForEach(tabCases, id: \.self) { tab in
                 Button {
                     selected = tab
                 } label: {

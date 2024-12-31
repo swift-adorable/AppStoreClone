@@ -8,6 +8,32 @@
 
 import Foundation
 
+// Common 모듈의 번들을 찾기 위한 클래스
+private class BundleFinder {}
+
+public extension Bundle {
+    
+    static var common: Bundle {
+        let bundleName = "Common"
+        let candidates = [
+            Bundle.main.resourceURL,
+            Bundle(for: BundleFinder.self).resourceURL,
+            Bundle.main.bundleURL,
+        ]
+        
+        for candidate in candidates {
+            let bundlePath = candidate?.appendingPathComponent(bundleName + ".bundle")
+            if let bundle = bundlePath.flatMap(Bundle.init(url:)) {
+                return bundle
+            }
+        }
+        
+        fatalError("Unable to find bundle named \(bundleName)")
+    }
+    
+}
+
+
 public extension Bundle {
     
     func decode<T: Decodable>(_ type: T.Type, 

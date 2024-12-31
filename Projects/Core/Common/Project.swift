@@ -6,7 +6,7 @@ let name = "Common"
 let project = Project.makeModule(
     name: name,
     product: .framework,
-    includeResource: false,
+    includeResource: true,
     dependencies: [
         .Core.model,
         //.Core.log,

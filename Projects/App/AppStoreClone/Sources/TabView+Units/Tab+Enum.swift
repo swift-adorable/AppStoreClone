@@ -9,7 +9,9 @@
 import SwiftUI
 
 import Today
+import Common
 
+@MainActor
 public enum Tab: String, CaseIterable {
     case today = "Today"
     case app = "App"
@@ -36,7 +38,7 @@ public extension Tab {
         }
     }
     
-    var imageSystemName: String {
+    nonisolated var imageSystemName: String {
         switch self {
         case .today:
             "doc.text.image"

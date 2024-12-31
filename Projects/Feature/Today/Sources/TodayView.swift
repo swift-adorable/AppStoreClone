@@ -22,13 +22,7 @@ public struct TodayView: View {
     @Namespace private var animation
     
     public init() {
-        print("TEST TodayView initialize")
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .systemBackground.withAlphaComponent(0.8)
-        appearance.shadowColor = .clear
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        setNavigationBarTransparentBackground()
     }
     
     public var body: some View {
@@ -136,17 +130,18 @@ public struct TodayView: View {
         .padding(.top, 0.1)
         .padding(.bottom, 0.1)
         .onAppear {
-            let bufApps = Bundle.main.decode(Model.Applications.self, from: "DummyData.json")
-            var rand = Model.Applications()
-            for _ in 0..<5 {
-                let randIdx = (0..<15).randomElement() ?? 0
-                let randItem = bufApps[randIdx]
-                rand.append(randItem)
+            // 사용할 때
+            if let commonBundle = Bundle.common {
+                let data = commonBundle.decode(Model.Applications.self, from: "DummyData.json")
+                var rand = Model.Applications()
+                for _ in 0..<5 {
+                    let randIdx = (0..<15).randomElement() ?? 0
+                    let randItem = data[randIdx]
+                    rand.append(randItem)
+                }
+                apps = rand
             }
-            apps = rand
-            print("TEST Today onAppear")
-        }.task {
-            print("TEST TodayView task started")
+
         }
         
     }
