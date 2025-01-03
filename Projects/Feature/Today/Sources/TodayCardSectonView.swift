@@ -13,10 +13,17 @@ import Kingfisher
 
 public struct TodayCardSectonView: View {
     
-    let item: Model.Application
-    let animation: Namespace.ID
+    @Binding private var currentItem: Model.Application?
+    @Binding private var animateView: Bool
+    private let item: Model.Application
+    private let animation: Namespace.ID
     
-    public init(_ item: Model.Application, animation: Namespace.ID) {
+    public init(currentItem: Binding<Model.Application?>,
+                animationView: Binding<Bool>,
+                item: Model.Application,
+                animation: Namespace.ID) {
+        self._currentItem = currentItem
+        self._animateView = animationView
         self.item = item
         self.animation = animation
     }
@@ -27,17 +34,21 @@ public struct TodayCardSectonView: View {
             
             ZStack(alignment: .topLeading) {
                 
-                KFImage(URL(string: "https://picsum.photos/512?random=\((0...100).randomElement() ?? 0)"))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .cornerRadius(12)
+                GeometryReader { proxy in
+                    let size = proxy.size
+                    KFImage(URL(string: "https://picsum.photos/512?random=\((0...100).randomElement() ?? 0)"))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: size.width, height: size.height)
+                }
+                .frame(height: 400)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     
                     if Bool.random() {
                         Text("Now available")
+                            .padding(4)
                             .font(.caption)
-                            .padding(6)
                             .background(Color.black.opacity(0.6))
                             .foregroundColor(.white)
                             .cornerRadius(4)
@@ -57,45 +68,52 @@ public struct TodayCardSectonView: View {
                         .padding([.bottom, .leading], 6)
                         .foregroundColor(.gray)
                     
-                }
+                }.frame(height: 400)
+                //.foregroundColor(.primary)
+                //.padding()
+                //.offset(y: currentItem?.id == item.id && animateView ? 44 : 0)
                 
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            Spacer()
+            
+            HStack(spacing: 4) {
                 
-                HStack(spacing: 4) {
+                KFImage(URL(string: "https://picsum.photos/30/30?random=\((0...100).randomElement() ?? 0)"))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 30, height: 30)
+                    .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                
+                VStack(alignment: .leading, spacing: 4) {
                     
-                    KFImage(URL(string: "https://picsum.photos/30/30?random=\((0...100).randomElement() ?? 0)"))
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(6)
+                    Text(item.appName)
+                        .font(.subheadline)
                     
-                    VStack(alignment: .leading, spacing: 4) {
-                        
-                        Text(item.appName)
-                            .font(.subheadline)
-                        
-                        Text(item.bannerTitle)
-                            .font(.caption2)
-                        
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "icloud.and.arrow.down")
-                        .foregroundColor(.blue)
+                    Text(item.bannerTitle)
+                        .font(.caption2)
                     
                 }
                 
+                Spacer()
+                
+                Image(systemName: "icloud.and.arrow.down")
+                    .foregroundColor(.blue)
+                
             }
-            .padding()
-            .background(Color.white)
+            .padding([.vertical, .horizontal])
+            
         }
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(radius: 5)
-        .padding(.horizontal)
+        .background {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(Color(.tertiarySystemBackground))
+        }
         .matchedGeometryEffect(id: item.id, in: animation)
+//        .background(Color.white)
+//        .cornerRadius(12)
+//        .shadow(radius: 5)
+//        .padding(.horizontal)
+//        .matchedGeometryEffect(id: item.id, in: animation)
         
     }
 }

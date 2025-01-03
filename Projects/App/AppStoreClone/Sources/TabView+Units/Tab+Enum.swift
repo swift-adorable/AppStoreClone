@@ -23,10 +23,10 @@ public enum Tab: String, CaseIterable {
 public extension Tab {
     
     @ViewBuilder
-    var unitView: some View {
+    func unitView(_ animation: Namespace.ID) -> some View {
         switch self {
         case .today:
-            TodayView()
+            TodayView(animation)
         case .app:
             AppView()
         case .game:

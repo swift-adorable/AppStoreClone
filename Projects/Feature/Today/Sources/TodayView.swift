@@ -14,14 +14,22 @@ import Kingfisher
 
 @MainActor
 public struct TodayView: View {
+    
     @State private var apps = Model.Applications()
     @State private var currentItem: Model.Application?
     @State private var isShowDetailPage: Bool = false
     @State private var scrollOffset: CGFloat = 0
     
-    @Namespace private var animation
+    var animation: Namespace.ID
     
-    public init() {
+    @EnvironmentObject var globalAppState: GlobalAppState
+    
+    // 새로 추가된 애니메이션 프로퍼티
+    @State private var animateView: Bool = false
+    @State private var animateContent: Bool = false
+    
+    public init(_ animation: Namespace.ID) {
+        self.animation = animation
         setNavigationBarTransparentBackground()
     }
     
@@ -51,62 +59,26 @@ public struct TodayView: View {
                             CategoryButton(title: "엔터테인먼트", icon: "popcorn")
                             CategoryButton(title: "사진 및 비디오", icon: "camera")
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical)
-                        
+                        .padding([.horizontal, .vertical])
                     }
-                    
-//                    VStack(spacing: 20) {
-//                        List(apps) { item in
-//                            ScaledButtonContainer(
-//                                action: {
-//                                    currentItem = item
-//                                    isShowDetailPage = true
-//                                },
-//                                currentItem: $currentItem,
-//                                isShowDetailPage: $isShowDetailPage,
-//                                item: item,
-//                                content: {
-//                                    TodayCardSectonView(item)
-//                                }
-//                            )
-//                        }.listStyle(.plain)
-//                    }
-                    
-                    
+                                        
                     ForEach(apps) { item in
                         ScaledButtonContainer(
                             action: {
                                 currentItem = item
                                 isShowDetailPage = true
+                                globalAppState.todayState.isDetailViewShowing = true
                             },
                             currentItem: $currentItem,
                             isShowDetailPage: $isShowDetailPage,
                             item: item,
                             content: {
-                                TodayCardSectonView(item, animation: animation)
+                                TodayCardSectonView(currentItem: $currentItem,
+                                                    animationView: $animateView,
+                                                    item: item,
+                                                    animation: animation)
                             }
                         )
-                    }
-                    
-                    TodayFeatureListSectionView(
-                        title: "유용한 도구",
-                        subtitle: "필수 앱",
-                        headerTitle: "대학 생활 필수 앱",
-                        apps: apps
-                    ).dampingAnimation($isShowDetailPage)
-                    
-                    TodayFeatureListSectionView(
-                        title: "새로운 발견",
-                        subtitle: "고르고 골랐어요",
-                        headerTitle: "신나는 연말을 위한 최고의 게임",
-                        apps: apps,
-                        headerImage: URL(string: "https://picsum.photos/seed/picsum/200/60")
-                    ).dampingAnimation($isShowDetailPage)
-                    
-                    if let item = apps.randomElement() {
-                        TodayCardSectonView(item, animation: animation)
-                            .dampingAnimation($isShowDetailPage)
                     }
                     
                     Spacer()
@@ -116,14 +88,17 @@ public struct TodayView: View {
             }
             .coordinateSpace(name: "scroll")
         }.overlay {
-            if isShowDetailPage, let currentItem = currentItem {
+            if isShowDetailPage {
                 Color.black.opacity(0.35)
                     .ignoresSafeArea()
                     .transition(.opacity)
                 
-                TodayDetailView(isShowingDetail: $isShowDetailPage, 
-                                animation: animation,
-                                item: currentItem)
+                TodayDetailView(isShowingDetail: $isShowDetailPage,
+                                item: $currentItem,
+                                animateView: $animateView,
+                                animateContent: $animateContent,
+                                animation: animation)
+                    .transition(.asymmetric(insertion: .identity, removal: .offset(y: 10)))
                     .interactiveDismissDisabled()
             }
         }
@@ -131,17 +106,17 @@ public struct TodayView: View {
         .padding(.bottom, 0.1)
         .onAppear {
             // 사용할 때
-            if let commonBundle = Bundle.common {
-                let data = commonBundle.decode(Model.Applications.self, from: "DummyData.json")
-                var rand = Model.Applications()
-                for _ in 0..<5 {
-                    let randIdx = (0..<15).randomElement() ?? 0
-                    let randItem = data[randIdx]
-                    rand.append(randItem)
-                }
-                apps = rand
+            let data = Bundle.common.decode(Model.Applications.self, from: "DummyData.json")
+            var rand = Model.Applications()
+            for _ in 0..<5 {
+                let randIdx = (0..<15).randomElement() ?? 0
+                let randItem = data[randIdx]
+                rand.append(randItem)
             }
+            apps = rand
 
+        }.onReceive(globalAppState.todayState.$isDetailViewShowing) { isDetailViewShowing in
+            print("is Showed DetailView changed to: \(isDetailViewShowing) on today view")
         }
         
     }

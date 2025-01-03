@@ -9,26 +9,22 @@
 import Foundation
 
 // Common 모듈의 번들을 찾기 위한 클래스
-private class BundleFinder {}
+//private class BundleFinder {}
 
 public extension Bundle {
     
     static var common: Bundle {
         let bundleName = "Common"
-        let candidates = [
-            Bundle.main.resourceURL,
-            Bundle(for: BundleFinder.self).resourceURL,
-            Bundle.main.bundleURL,
-        ]
-        
-        for candidate in candidates {
-            let bundlePath = candidate?.appendingPathComponent(bundleName + ".bundle")
-            if let bundle = bundlePath.flatMap(Bundle.init(url:)) {
+        print("Bundle.allFrameworks: \(Bundle.allFrameworks.count)")
+        // Core 프레임워크 내의 Common 번들 찾기
+        for bundle in Bundle.allFrameworks {
+            if bundle.bundleURL.lastPathComponent == "\(bundleName).framework" {
                 return bundle
             }
         }
         
         fatalError("Unable to find bundle named \(bundleName)")
+        
     }
     
 }

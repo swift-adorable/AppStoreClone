@@ -1,40 +1,45 @@
 import SwiftUI
-import Network
+import Today
 
-class AppState: ObservableObject {
-    @Published var isDetailViewShowing = false
-}
+import Common
 
 struct ContentView: View {
     
     @State private var selected: Tab = .today
-    @State private var tabCases: [Tab] = []
+    @State private var tabCases: [Tab] = Tab.allCases
+    
+    @StateObject var globalAppState = GlobalAppState()
+    
+    @State private var isHiddenTabBar: Bool = false
+    
+    @Namespace var animation
     
     @available(iOS 16.0, *)
     var body: some View {
         ZStack {
+            
             TabView(selection: $selected) {
                 ForEach(Tab.allCases, id: \.self) { tab in
                     NavigationStack {
-                        tab.unitView
+                        tab.unitView(animation)
+                            .environmentObject(globalAppState)
                     }.tag(tab)
                 }
                 .toolbar(.hidden, for: .tabBar)
-            }.navigationBarTitleDisplayMode(.inline)
-            
-            VStack {
-                Spacer()
-                tabBar
             }
-        }.onAppear {
-            print("TEST ContentView onAppear")
-        }.task {
-            await loadTabCases()
+            .navigationBarTitleDisplayMode(.inline)
+            
+            if isHiddenTabBar == false {
+                VStack {
+                    Spacer()
+                    tabBar
+                }
+            }
+            
+            
+        }.onReceive(globalAppState.todayState.$isDetailViewShowing) { isDetailViewShowing in
+            isHiddenTabBar = isDetailViewShowing
         }
-    }
-    
-    private func loadTabCases() async {
-        self.tabCases = await Tab.allCases
     }
     
     var tabBar: some View {
@@ -76,6 +81,5 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-        
     }
 }

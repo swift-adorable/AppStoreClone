@@ -12,12 +12,12 @@ import Today
 
 @main
 struct TodayDemoApp: App {
+    
+    @Namespace var animation
+    
     var body: some Scene {
         WindowGroup {
-            TodayView()
-                .onAppear {
-                    print("TESTS Demo appear")
-                }
+            TodayView(animation)
         }
     }
 }
